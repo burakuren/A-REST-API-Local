@@ -6,14 +6,11 @@ from db import db
 from resources.user_r import (
     User_Register,
     User_Login,
-    User_Logout,
     User,
     Token_Refresh
 )
 from resources.item_r import Item, Item_List
 from resources.store_r import Store, Store_List
-
-from blocklist import BLOCKLIST
 
 app = Flask(__name__)
 api = Api(app)
@@ -24,11 +21,7 @@ app.config["PROPAGATE_EXCEPTIONS"] = True
 
 app.config["JWT_SECRET_KEY"] = "burak"
 jwt = JWTManager()
-
-
-@jwt.token_in_blocklist_loader
-def check_if_token_in_blocklist(decryted_token):
-    return decryted_token["jti"] in BLOCKLIST
+jwt.init_app(app)
 
 
 @jwt.expired_token_loader
@@ -40,7 +33,7 @@ def expired_token_callback(error):
 
 
 @jwt.invalid_token_loader
-def invalid_token_callback(erro):
+def invalid_token_callback(error):
     return {
         "message": "Signature verification failed",
         "error": "invalid_token"
@@ -73,7 +66,6 @@ def revoked_token_callback():
 
 api.add_resource(User_Register, "/register")
 api.add_resource(User_Login, "/login")
-api.add_resource(User_Logout, "/logout")
 api.add_resource(User, "/user/<int:user_id>")
 api.add_resource(Token_Refresh, "/refresh")
 

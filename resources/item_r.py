@@ -78,7 +78,7 @@ class Item_List(Resource):
         user_id = get_jwt_identity()
         items = [item.json() for item in Item_Model.find_all()]
         if user_id:
-            return {"items":items}, 200
+            return {"items": items}, 200
         return {
             "items": [item["name"] for item in items],
             "message": "More data available if you log in."

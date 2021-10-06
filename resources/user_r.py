@@ -7,7 +7,6 @@ from flask_jwt_extended import (
     get_jwt_identity
 )
 from models.user_m import User_Model
-from blocklist import BLOCKLIST
 
 _user_parser = reqparse.RequestParser()
 _user_parser.add_argument(
@@ -55,15 +54,6 @@ class User_Login(Resource):
             }, 200
 
         return {"message": "Your username or password is wrong!"}, 401
-
-
-class User_Logout(Resource):
-
-    @jwt_required()
-    def post(self):
-        jti = get_jwt()["jti"]
-        BLOCKLIST.add(jti)
-        return {"message": "Successfully logged out"}, 200
 
 
 class User(Resource):
